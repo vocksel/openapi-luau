@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: extractions/setup-just@v1
+
+      - uses: Roblox/setup-foreman@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: just lint
+
+      - name: Get model file name
+        run: |
+          name=$(just _get-plugin-name)
+          sha=${GITHUB_SHA:0:7}
+          echo "MODEL_FILE=$name-$sha.rbxm" >> $GITHUB_ENV
+
+      - run: just init
+      - run: just build-here prod ${{ env.MODEL_FILE }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.MODEL_FILE }}
+          path: ${{ env.MODEL_FILE }}
+
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: extractions/setup-just@v1
+
+      - uses: Roblox/setup-foreman@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: just init
+
+      - name: Run Luau analysis
+        run: just analyze
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: extractions/setup-just@v1
+
+      - uses: Roblox/setup-foreman@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: just init
+
+      - run: just test

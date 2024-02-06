@@ -1,0 +1,6 @@
+# Rojo
+*.rbxl*
+*.rbxm*
+
+# Luau
+sourcemap.json
