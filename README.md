@@ -16,19 +16,6 @@ Install tools and initialize settings:
 just init
 ```
 
-Start the server:
-```sh
-just serve
-```
-
-
-Edit [`plugin/src/constants.lua`](https://github.com/vocksel/vscode-theme-importer-lua/blob/main/plugin/src/constants.lua) and set `SERVER_URL` to `http://localhost:8080`.
-
-Build the plugin:
-```sh
-just build-watch
-```
-
 ## Testing
 
 Test cases will be revamped once [Jest](https://github.com/jsdotlua/jest-lua) becomes accessible. In the meantime, we're writing adhoc test cases that rely on asserts.
