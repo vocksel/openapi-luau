@@ -1,4 +1,4 @@
-local types = require("@server/openapi/types")
+local types = require("./types")
 
 type Object<T> = types.Object<T>
 

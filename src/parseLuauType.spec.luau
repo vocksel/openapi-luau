@@ -1,11 +1,11 @@
 local fs = require("@lune/fs")
 local serde = require("@lune/serde")
-local openapiTypes = require("@server/openapi/openapi31")
+local openapiTypes = require("./openapi31")
 local parseLuauType = require("./parseLuauType")
 
 type OpenAPIObject = openapiTypes.OpenAPIObject
 
-local petstore: OpenAPIObject = serde.decode("yaml", fs.readFile("server/src/openapi/mocks/petstore.yml"))
+local petstore: OpenAPIObject = serde.decode("yaml", fs.readFile("src/mocks/petstore.yml"))
 
 -- print(petstore)
 

@@ -1,7 +1,7 @@
-local types = require("@server/openapi/types")
-local openapiTypes = require("@server/openapi/openapi31")
-local parseLuauTypeBody = require("@server/openapi/parseLuauTypeBody")
-local parseLuauComment = require("@server/openapi/parseLuauComment")
+local types = require("./types")
+local openapiTypes = require("./openapi31")
+local parseLuauTypeBody = require("./parseLuauTypeBody")
+local parseLuauComment = require("./parseLuauComment")
 
 type SchemaObject = openapiTypes.SchemaObject
 

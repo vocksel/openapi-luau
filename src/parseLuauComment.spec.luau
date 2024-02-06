@@ -1,11 +1,11 @@
 local fs = require("@lune/fs")
 local serde = require("@lune/serde")
-local openapiTypes = require("@server/openapi/openapi31")
+local openapiTypes = require("./openapi31")
 local parseLuauComment = require("./parseLuauComment")
 
 type OpenAPIObject = openapiTypes.OpenAPIObject
 
-local api: OpenAPIObject = serde.decode("yaml", fs.readFile("server/src/openapi/mocks/commented-schema.yml"))
+local api: OpenAPIObject = serde.decode("yaml", fs.readFile("src/mocks/commented-schema.yml"))
 
 local comment = parseLuauComment(api.components.schemas.SummaryAndDescription)
 local expected = [[-- A short summary
