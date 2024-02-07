@@ -4,3 +4,8 @@
 
 # Luau
 sourcemap.json
+
+
+# Added by cargo
+
+/target
