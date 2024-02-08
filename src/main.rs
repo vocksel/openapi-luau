@@ -1,16 +1,11 @@
-use full_moon::{
-    ast::types::{ExportedTypeDeclaration, TypeDeclaration, TypeInfo},
-    tokenizer::{Token, TokenReference},
-    ShortString,
-};
-fn main() {
-    // let petstore = fs::read_to_string("./mocks/petstore.yml");
+use oas3;
+use std::path::Path;
+mod types;
 
-    // okay yeah it looks like it would be really nice to build the types file this way.
-    let pet = ExportedTypeDeclaration::new(TypeDeclaration::new(
-        "Pet".parse::<TokenReference>().unwrap(),
-        TypeInfo::Basic(TokenReference::symbol("string").unwrap()),
-    ));
-    println!("{:?}", pet);
-    println!("Hello, world!");
+fn main() {
+    let petstore_spec = Path::new("src/mocks/commented-schema.yml");
+    let spec = oas3::from_path(petstore_spec).expect("Failed to load the OpenAPI spec file");
+
+    let tree = types::generate_luau_types(spec);
+    println!("{:?}", tree);
 }
