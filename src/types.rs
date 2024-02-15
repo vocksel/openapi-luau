@@ -1,6 +1,6 @@
 use full_moon::{
     ast::types::{ExportedTypeDeclaration, TypeDeclaration, TypeInfo},
-    tokenizer::TokenReference,
+    tokenizer::{Token, TokenReference, TokenType},
 };
 use oas3::OpenApiV3Spec;
 
@@ -9,17 +9,26 @@ const HEADER_COMMENT: &str = "--[[
 \tDon't make manual changes.
 ]]\n";
 
-pub fn generate_luau_types(spec: OpenApiV3Spec) -> Vec<TypeDeclaration> {
-    let types = Vec::new();
+pub fn generate_luau_types(spec: OpenApiV3Spec) -> Vec<ExportedTypeDeclaration> {
+    let types = vec![];
 
     if let Some(components) = spec.components {
-        println!("schemas");
         for (k, v) in components.schemas {
             let type_decl = TypeDeclaration::new(
-                "Pet".parse::<TokenReference>().unwrap(),
+                TokenReference::new(
+                    vec![],
+                    Token::new(TokenType::Identifier {
+                        identifier: k.into(),
+                    }),
+                    vec![],
+                ),
+                // TODO: Use type of `v` to construct the type
                 TypeInfo::Basic(TokenReference::symbol("string").unwrap()),
             );
-            types.append(ExportedTypeDeclaration::new(type_decl));
+
+            println!("{:?}", type_decl);
+
+            // types.append(ExportedTypeDeclaration::new(type_decl));
         }
     }
 
