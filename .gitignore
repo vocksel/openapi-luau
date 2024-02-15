@@ -1,11 +1,3 @@
-# Rojo
-*.rbxl*
-*.rbxm*
-
-# Luau
-sourcemap.json
-
-
 # Added by cargo
 
 /target
