@@ -1,5 +1,6 @@
 # openapi-luau
 
+Implementation of the [OpenAPI specification](https://github.com/OAI/OpenAPI-Specification) for [Lune](https://github.com/lune-org/lune) services
 
 ## Development
 
