@@ -1,6 +1,5 @@
-# Rojo
-*.rbxl*
-*.rbxm*
+# Used for testing
+types.luau
 
-# Luau
-sourcemap.json
+# Added by cargo
+/target
