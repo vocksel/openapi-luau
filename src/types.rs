@@ -15,17 +15,18 @@ const HEADER_COMMENT: &str = "--[[
 \tDon't make manual changes.
 ]]\n";
 
-fn generate_luau_type_from_schema_object(schema: Schema) -> ExportedTypeDeclaration {
+fn generate_luau_type_from_schema_object(name: &str, schema: Schema) -> ExportedTypeDeclaration {
     let fields: Punctuated<TypeField> = Punctuated::new();
 
-    for (name, prop) in schema.properties {
+    for (propName, prop) in schema.properties {
         let mut is_required = false;
         for other in schema.required.iter() {
-            if name.eq(other) {
-                println!("{} is required", name);
+            if propName.eq(other) {
+                println!("{} is required", propName);
                 is_required = true;
             }
         }
+        // TODO: Push to `fields`
     }
 
     let braces = ContainedSpan::new(
@@ -51,7 +52,7 @@ fn generate_luau_type_from_schema_object(schema: Schema) -> ExportedTypeDeclarat
         TokenReference::new(
             vec![],
             Token::new(TokenType::Identifier {
-                identifier: k.into(),
+                identifier: name.into(),
             }),
             vec![],
         ),
@@ -66,48 +67,15 @@ pub fn generate_luau_types(spec: OpenApiV3Spec) -> Vec<ExportedTypeDeclaration> 
     let mut types = vec![];
 
     if let Some(components) = spec.components {
-        for (k, v) in components.schemas {
+        for (name, object_or_ref) in components.schemas {
             // TODO: If v is a ref then use the type name?
 
-            match v {
-                ObjectOrReference::Object(obj) => println!("object {:?}", obj),
+            match object_or_ref {
+                ObjectOrReference::Object(obj) => {
+                    types.push(generate_luau_type_from_schema_object(&name, obj))
+                }
                 ObjectOrReference::Ref { ref_path } => println!("ref {:?}", ref_path),
             }
-
-            let fields: Punctuated<TypeField> = Punctuated::new();
-
-            let braces = ContainedSpan::new(
-                TokenReference::new(
-                    vec![],
-                    Token::new(TokenType::Identifier {
-                        identifier: ShortString::new("{"),
-                    }),
-                    vec![],
-                ),
-                TokenReference::new(
-                    vec![],
-                    Token::new(TokenType::Identifier {
-                        identifier: ShortString::new("}"),
-                    }),
-                    vec![],
-                ),
-            );
-
-            // TODO: Traverse over `v` to generate the full type
-            // fields.push(TypeField::new());
-            let type_decl = TypeDeclaration::new(
-                TokenReference::new(
-                    vec![],
-                    Token::new(TokenType::Identifier {
-                        identifier: k.into(),
-                    }),
-                    vec![],
-                ),
-                // TODO: Use type of `v` to construct the type
-                TypeInfo::Table { braces, fields },
-            );
-
-            types.push(ExportedTypeDeclaration::new(type_decl));
         }
     }
 
