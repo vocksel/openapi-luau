@@ -6,61 +6,64 @@ on:
       - main
   pull_request:
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: Lint
+        run: cargo fmt --check
+
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows x86_64
+            runner-os: windows-latest
+            cargo-target: x86_64-pc-windows-msvc
+
+          - name: Linux x86_64
+            runner-os: ubuntu-latest
+            cargo-target: x86_64-unknown-linux-gnu
+
+          - name: macOS x86_64
+            runner-os: macos-latest
+            cargo-target: x86_64-apple-darwin
+    timeout-minutes: 10
+    name: build / ${{ matrix.name }}
+    runs-on: ${{ matrix.runner-os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: extractions/setup-just@v1
-
-      - uses: Roblox/setup-foreman@v1
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          components: clippy
+          targets: ${{ matrix.cargo-target }}
 
-      - run: just lint
-
-      - name: Get model file name
+      - name: Build
         run: |
-          name=$(just _get-plugin-name)
-          sha=${GITHUB_SHA:0:7}
-          echo "MODEL_FILE=$name-$sha.rbxm" >> $GITHUB_ENV
+          cargo build \
+          --locked --all-features \
+          --target ${{ matrix.cargo-target }}
 
-      - run: just init
-      - run: just build-here prod ${{ env.MODEL_FILE }}
+      - name: Lint
+        run: |
+          cargo clippy \
+          --locked --all-features \
+          --target ${{ matrix.cargo-target }}
 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.MODEL_FILE }}
-          path: ${{ env.MODEL_FILE }}
-
-  analyze:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: extractions/setup-just@v1
-
-      - uses: Roblox/setup-foreman@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - run: just init
-
-      - name: Run Luau analysis
-        run: just analyze
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: extractions/setup-just@v1
-
-      - uses: Roblox/setup-foreman@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - run: just init
-
-      - run: just test
+      - name: Test
+        run: |
+          cargo test \
+          --locked --all-features \
+          --target ${{ matrix.cargo-target }}

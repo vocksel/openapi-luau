@@ -6,6 +6,8 @@ info:
   version: 1.0.0
   basePath: /v1
 
+paths:
+
 components:
   schemas:
     SummaryAndDescription:

@@ -1,0 +1,19 @@
+[package]
+name = "openapi-luau"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "openapi_luau"
+path = "src/main.rs"
+
+[lib]
+name = "openapi_luau"
+path = "src/lib.rs"
+
+[dependencies]
+full_moon = { version = "0.19.0", features = ["roblox"] }
+oas3 = "0.4.0"
+stylua = { version = "0.20.0", features = ["luau"] }
